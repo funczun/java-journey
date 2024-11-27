@@ -32,7 +32,7 @@ public class ArrEx9 {
                 } else if (productCount == n) {
                     System.out.println("[System] 등록 가능한 상품 수를 초과합니다.");
                 }
-                } else if (choice == 2) {
+            } else if (choice == 2) {
                 if (productCount == 0) {
                     System.out.println("[System] 등록된 상품이 없습니다.");
                 }
