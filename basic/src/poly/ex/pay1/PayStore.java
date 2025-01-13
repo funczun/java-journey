@@ -1,6 +1,7 @@
 package poly.ex.pay1;
 
-public class PayStore {
+// 추상 클래스로 선언 (객체 생성 방지)
+public abstract class PayStore {
 
     public static Pay findPay(String option) {
         if (option.equals("kakao")) {
