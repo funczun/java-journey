@@ -1,11 +1,11 @@
 package collection.link;
 
 public class Node {
-    Object value;
+    Object data;
     Node next;
 
     public Node(Object value) {
-        this.value = value;
+        this.data = value;
     }
 
     @Override
@@ -14,7 +14,7 @@ public class Node {
         Node x = this;
         sb.append("[");
         while (x != null) {
-            sb.append(x.value);
+            sb.append(x.data);
             if (x.next != null) {
                 sb.append("->");
             }
