@@ -10,8 +10,6 @@ public class Problem10026 {
     static final int[] dx = {0, 0, -1, 1};
     static final int[] dy = {1, -1, 0, 0};
     static Queue<int[]> queue = new LinkedList<>();
-    static boolean isProcess = true;
-    static int count = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -28,20 +26,8 @@ public class Problem10026 {
         }
         br.close();
 
-        while (isProcess) {
-            int[] point = point(visited);
-            int x = point[0];
-            int y = point[1];
-            queue.add(new int[]{x, y});
-            bfs(board, visited);
-        }
+        int count1 = bfs(board, visited);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(count);
-
-        isProcess = true;
-        count = 0;
-        visited = new int[N][N];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (board[i][j] == 'R') {
@@ -50,53 +36,40 @@ public class Problem10026 {
             }
         }
 
-        while (isProcess) {
-            int[] point = point(visited);
-            int x = point[0];
-            int y = point[1];
-            queue.add(new int[]{x, y});
-            bfs(board, visited);
-        }
+        visited = new int[N][N];
+        int count2 = bfs(board, visited);
 
-        sb.append(" ").append(count);
-
-        System.out.print(sb);
+        System.out.print(count1 + " " + count2);
     }
 
-    static int[] point(int[][] visited) {
-        for (int i = 0; i < visited.length; i++) {
-            for (int j = 0; j < visited[0].length; j++) {
+    static int bfs(char[][] board, int[][] visited) {
+        queue.clear();
+        int count = 0;
+
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board[0].length; j++) {
                 if (visited[i][j] == 0) {
-                    return new int[]{i, j};
-                }
-            }
-        }
-        return new int[]{-1, -1};
-    }
+                    visited[i][j] = 1;
+                    queue.add(new int[]{i, j});
+                    while (!queue.isEmpty()) {
+                        int[] cur = queue.poll();
+                        int x = cur[0];
+                        int y = cur[1];
 
-    static void bfs(char[][] board, int[][] visited) {
-        while (!queue.isEmpty()) {
-            int[] cur = queue.poll();
-            int x = cur[0];
-            int y = cur[1];
-            if (x < 0 && y < 0) {
-                isProcess = false;
-                return;
-            }
-            visited[x][y] = 1;
-
-            for (int i = 0; i < 4; i++) {
-                int newX = x + dx[i];
-                int newY = y + dy[i];
-                if (isValid(board, visited, newX, newY)) {
-                    if (board[x][y] == board[newX][newY]) {
-                        queue.add(new int[]{newX, newY});
-                        visited[newX][newY] = 1;
+                        for (int d = 0; d < 4; d++) {
+                            int newX = x + dx[d];
+                            int newY = y + dy[d];
+                            if (isValid(board, visited, newX, newY) && board[x][y] == board[newX][newY]) {
+                                queue.add(new int[]{newX, newY});
+                                visited[newX][newY] = 1;
+                            }
+                        }
                     }
+                    count++;
                 }
             }
         }
-        count++;
+        return count;
     }
 
     static boolean isValid(char[][] board, int[][] visited, int x, int y) {
