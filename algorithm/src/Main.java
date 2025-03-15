@@ -1,4 +1,4 @@
-// https://www.acmicpc.net/problem/7569
+// https://www.acmicpc.net/problem/21736
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,95 +8,71 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    static int[] dx = {-1, 1, 0, 0, 0, 0};
-    static int[] dy = {0, 0, -1, 1, 0, 0};
-    static int[] dz = {0, 0, 0, 0, -1, 1};
-    static int days = 0;
+    static int N;
+    static int M;
+    static char[][] campus;
+    static boolean[][] visited;
+    static int[] dx = {0, 0, -1, 1};
+    static int[] dy = {1, -1, 0, 0};
+    static int count;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int M = Integer.parseInt(st.nextToken());
-        int N = Integer.parseInt(st.nextToken());
-        int H = Integer.parseInt(st.nextToken());
-        int[][][] graph = new int[H][N][M];
-        int[][][] visited = new int[H][N][M];
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        campus = new char[N][M];
+        visited = new boolean[N][M];
 
-        for (int i = 0; i < H; i++) {
-            for (int j = 0; j < N; j++) {
-                st = new StringTokenizer(br.readLine());
-                for (int k = 0; k < M; k++) {
-                    graph[i][j][k] = Integer.parseInt(st.nextToken());
+        int[] cur = new int[2];
+
+        for (int row = 0; row < N; row++) {
+            String line = br.readLine();
+            for (int col = 0; col < M; col++) {
+                campus[row][col] = line.charAt(col);
+                if (line.charAt(col) == 'I') {
+                    cur = new int[]{row, col};
                 }
             }
         }
 
-        bfs(graph, visited);
-        printResult(graph);
+        bfs(campus, visited, cur);
+
+        if (count == 0) {
+            System.out.println("TT");
+        } else if (count > 0) {
+            System.out.println(count);
+        }
     }
 
-    static void bfs(int[][][] graph, int[][][] visited) {
+    static void bfs(char[][] grid, boolean[][] visited, int[] cur) {
         Queue<int[]> queue = new LinkedList<>();
-
-        for (int z = 0; z < graph.length; z++) {
-            for (int y = 0; y < graph[0].length; y++) {
-                for (int x = 0; x < graph[0][0].length; x++) {
-                    if (graph[z][y][x] == 1 && visited[z][y][x] == 0) {
-                        queue.offer(new int[]{x, y, z});
-                        visited[z][y][x] = 1;
-                    }
-                }
-            }
-        }
-
-        int qSize = queue.size();
+        queue.offer(cur);
+        visited[cur[0]][cur[1]] = true;
 
         while (!queue.isEmpty()) {
-            for (int repeat = 0; repeat < qSize; repeat++) {
-                int[] cur = queue.poll();
+            int[] pos = queue.poll();
+            int row = pos[0];
+            int col = pos[1];
 
-                if (cur != null) {
-                    int x = cur[0];
-                    int y = cur[1];
-                    int z = cur[2];
+            for (int i = 0; i < 4; i++) {
+                int newRow = row + dx[i];
+                int newCol = col + dy[i];
 
-                    for (int i = 0; i < 6; i++) {
-                        int newX = x + dx[i];
-                        int newY = y + dy[i];
-                        int newZ = z + dz[i];
+                if (newRow >= 0 && newRow < N &&
+                        newCol >= 0 && newCol < M && !visited[newRow][newCol]) {
+                    visited[newRow][newCol] = true;
 
-                        if (newX >= 0 && newX < graph[0][0].length &&
-                                newY >= 0 && newY < graph[0].length && newZ >= 0 && newZ < graph.length &&
-                                graph[newZ][newY][newX] == 0 && visited[newZ][newY][newX] == 0) {
-                            graph[newZ][newY][newX] = 1;
-                            queue.offer(new int[]{newX, newY, newZ});
-                            visited[newZ][newY][newX] = 1;
-                        }
+                    if (grid[newRow][newCol] == 'X') {
+                        continue;
                     }
-                }
-            }
-
-            if (queue.isEmpty()) {
-                return;
-            }
-
-            qSize = queue.size();
-            days++;
-        }
-    }
-
-    static void printResult(int[][][] graph) {
-        for (int z = 0; z < graph.length; z++) {
-            for (int y = 0; y < graph[0].length; y++) {
-                for (int x = 0; x < graph[0][0].length; x++) {
-                    if (graph[z][y][x] == 0) {
-                        System.out.println(-1);
-                        return;
+                    if (grid[newRow][newCol] == 'P') {
+                        count++;
                     }
+                    queue.offer(new int[]{newRow, newCol});
                 }
             }
         }
-        System.out.println(days);
     }
 }
