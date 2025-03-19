@@ -1,34 +1,53 @@
-// https://www.acmicpc.net/problem/9461
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    static long[] dp;
+    static int start;
+    static int end;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int T = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-        while (T-- > 0) {
-            int n = Integer.parseInt(br.readLine());
-            getP(n);
+        int[] trees = new int[N];
+
+        st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            trees[i] = Integer.parseInt(st.nextToken());
+            if (trees[i] > end) {
+                end = trees[i];
+            }
         }
+
+        binary(trees, M);
     }
 
-    private static void getP(int n) {
-        dp = new long[n + 1];
-        dp[1] = 1;
+    static void binary(int[] trees, int M) {
+        while (start <= end) {
+            int mid = start + (end - start) / 2;
+            long sum = 0;
 
-        if (n > 1) {
-            dp[2] = 1;
+            for (int tree : trees) {
+                int afterCut = tree - mid;
+                if (afterCut > 0) {
+                    sum += afterCut;
+                }
+            }
+
+            if (sum > M) {
+                start = mid + 1;
+            } else if (sum < M) {
+                end = mid - 1;
+            } else {
+                System.out.print(mid);
+                return;
+            }
         }
 
-        for (int i = 3; i <= n; i++) {
-            dp[i] = dp[i - 3] + dp[i - 2];
-        }
-
-        System.out.println(dp[n]);
+        System.out.println(end);
     }
 }
