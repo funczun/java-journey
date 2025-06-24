@@ -3,56 +3,59 @@ import java.util.*;
 
 public class Main {
     static int[][] matrix;
-    static int[][] visited;
-    static int[] dx = {0, 0, -1, 1};
-    static int[] dy = {1, -1, 0, 0};
-    static int N, M;
+    static int white;
+    static int blue;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
+        StringTokenizer st;
 
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-
-        matrix = new int[N][M];
-        visited = new int[N][M];
+        int N = Integer.parseInt(br.readLine());
+        matrix = new int[N][N];
 
         for (int i = 0; i < N; i++) {
-            String line = br.readLine();
-            for (int j = 0; j < M; j++) {
-                matrix[i][j] = line.charAt(j) - '0';
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < N; j++) {
+                matrix[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        bfs(0, 0);
+        cut(0, 0, N);
+
+        System.out.println(white);
+        System.out.println(blue);
     }
 
-    static void bfs(int startX, int startY) {
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[]{startX, startY});
-        visited[startX][startY] = 1;
-
-        while (!queue.isEmpty()) {
-            int[] cur = queue.poll();
-            int x = cur[0];
-            int y = cur[1];
-
-            if (x == N - 1 && y == M - 1) {
-                System.out.println(visited[x][y]);
-                return;
+    static void cut(int row, int col, int dist) {
+        if (isOneColor(row, col, dist)) {
+            if (matrix[row][col] == 0) {
+                white++;
             }
+            else if (matrix[row][col] == 1) {
+                blue++;
+            }
+            return;
+        }
 
-            for (int i = 0; i < 4; i++) {
-                int newX = x + dx[i];
-                int newY = y + dy[i];
+        int newDist = dist / 2;
 
-                if (newX >= 0 && newX < N && newY >= 0 && newY < M
-                        && visited[newX][newY] == 0 && matrix[newX][newY] == 1) {
-                    queue.offer(new int[]{newX, newY});
-                    visited[newX][newY] = visited[x][y] + 1;
+        cut(row, col, newDist);
+        cut(row, col + newDist, newDist);
+        cut(row + newDist, col, newDist);
+        cut(row + newDist, col + newDist, newDist);
+    }
+
+    static boolean isOneColor(int row , int col, int dist) {
+        int color = matrix[row][col];
+
+        for (int i = row; i < row + dist; i++) {
+            for (int j = col; j < col + dist; j++) {
+                if (matrix[i][j] != color) {
+                    return false;
                 }
             }
         }
+
+        return true;
     }
 }
