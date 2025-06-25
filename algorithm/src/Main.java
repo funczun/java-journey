@@ -2,60 +2,40 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-    static int[][] matrix;
-    static int white;
-    static int blue;
-
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
         StringTokenizer st;
 
-        int N = Integer.parseInt(br.readLine());
-        matrix = new int[N][N];
+        int S = 0;
+        int M = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) {
-                matrix[i][j] = Integer.parseInt(st.nextToken());
+            String command = st.nextToken();
+            if (command.equals("add")) {
+                int value = Integer.parseInt(st.nextToken());
+                S |= (1 << value);
+            }
+            else if (command.equals("remove")) {
+                int value = Integer.parseInt(st.nextToken());
+                S &= ~(1 << value);
+            }
+            else if (command.equals("check")) {
+                int value = Integer.parseInt(st.nextToken());
+                sb.append((S & (1 << value)) != 0 ? 1 : 0).append("\n");
+            }
+            else if (command.equals("toggle")) {
+                int value = Integer.parseInt(st.nextToken());
+                S ^= (1 << value);
+            }
+            else if (command.equals("all")) {
+                S = (1 << 21) - 1;
+            }
+            else if (command.equals("empty")) {
+                S = 0;
             }
         }
-
-        cut(0, 0, N);
-
-        System.out.println(white);
-        System.out.println(blue);
-    }
-
-    static void cut(int row, int col, int dist) {
-        if (isOneColor(row, col, dist)) {
-            if (matrix[row][col] == 0) {
-                white++;
-            }
-            else if (matrix[row][col] == 1) {
-                blue++;
-            }
-            return;
-        }
-
-        int newDist = dist / 2;
-
-        cut(row, col, newDist);
-        cut(row, col + newDist, newDist);
-        cut(row + newDist, col, newDist);
-        cut(row + newDist, col + newDist, newDist);
-    }
-
-    static boolean isOneColor(int row , int col, int dist) {
-        int color = matrix[row][col];
-
-        for (int i = row; i < row + dist; i++) {
-            for (int j = col; j < col + dist; j++) {
-                if (matrix[i][j] != color) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        System.out.print(sb);
     }
 }
