@@ -4,36 +4,23 @@ import java.util.*;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.parseInt(br.readLine());
+
+        PriorityQueue<Integer> pq = new PriorityQueue<>(); // 기본형: minHeap
         StringBuilder sb = new StringBuilder();
-        StringTokenizer st;
 
-        int S = 0;
-        int M = Integer.parseInt(br.readLine());
-
-        for (int i = 0; i < M; i++) {
-            st = new StringTokenizer(br.readLine());
-            String command = st.nextToken();
-            if (command.equals("add")) {
-                int value = Integer.parseInt(st.nextToken());
-                S |= (1 << value);
+        for (int i = 0; i < N; i++) {
+            int value = Integer.parseInt(br.readLine());
+            if (value > 0) {
+                pq.add(value);
             }
-            else if (command.equals("remove")) {
-                int value = Integer.parseInt(st.nextToken());
-                S &= ~(1 << value);
-            }
-            else if (command.equals("check")) {
-                int value = Integer.parseInt(st.nextToken());
-                sb.append((S & (1 << value)) != 0 ? 1 : 0).append("\n");
-            }
-            else if (command.equals("toggle")) {
-                int value = Integer.parseInt(st.nextToken());
-                S ^= (1 << value);
-            }
-            else if (command.equals("all")) {
-                S = (1 << 21) - 1;
-            }
-            else if (command.equals("empty")) {
-                S = 0;
+            else if (value == 0) {
+                try {
+                    sb.append(pq.remove()).append("\n");
+                }
+                catch (Exception e) {
+                    sb.append(0).append("\n");
+                }
             }
         }
         System.out.print(sb);
